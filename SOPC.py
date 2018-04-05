@@ -1,5 +1,5 @@
 #! python3
-# SPC.py - Steam Price Calculator
+# SOPC.py - Steam Optimal Price Calculator
 
 import re
 import pyperclip
