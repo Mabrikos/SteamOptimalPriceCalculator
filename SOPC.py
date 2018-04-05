@@ -4,9 +4,9 @@
 import re
 import pyperclip
 from itertools import groupby
-#--------------------------------------------------------|
-per = 140  # Price reduction in % (140 = reduction by 40%|
-#--------------------------------------------------------|
+
+init = int(input("Reduct price by, %: "))
+per = init + 100
 
 
 def PriceConverter():
@@ -14,7 +14,8 @@ def PriceConverter():
     if cpp_buy < 0.25 or cpp_buy > 1.00:
         cpp_buy = 0
     pyperclip.copy(str(cpp_buy))
-    print(">>> Optimal price", "[",cpp_buy,"]", "is copied to your clipboard\n")
+    print(">>> Optimal price", "[", cpp_buy, "]",
+          "is copied to your clipboard\n")
     start()
 
 
