@@ -18,7 +18,8 @@ def ReductionInit():
 
 def PriceConverter():
     cpp_buy = cpp / per * 100
-    if cpp_buy < 0.25 or cpp_buy > 1.00: #Range of allowed prices (from 0.25 to 1.00)
+    # Range of allowed prices (from 0.25 to 1.00)
+    if cpp_buy < 0.25 or cpp_buy > 1.00:
         cpp_buy = 0
     if cpp_buy > 0:
         print(
