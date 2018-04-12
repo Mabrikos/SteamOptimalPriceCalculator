@@ -5,17 +5,27 @@ import re
 import pyperclip
 from itertools import groupby
 
-init = int(input("Reduct price by, %: "))
-per = init + 100
+
+def ReductionInit():
+    init = input("Reduct price by, %: ")
+    try:
+        global per
+        per = int(init) + 100
+    except:
+        print('Number is required')
+        ReductionInit()
 
 
 def PriceConverter():
     cpp_buy = cpp / per * 100
-    if cpp_buy < 0.25 or cpp_buy > 1.00:
+    if cpp_buy < 0.25 or cpp_buy > 1.00: #Range of allowed prices (from 0.25 to 1.00)
         cpp_buy = 0
-    pyperclip.copy(str(cpp_buy))
-    print(">>> Optimal price", "[", cpp_buy, "]",
-          "has copied to your clipboard\n")
+    if cpp_buy > 0:
+        print(
+            ">>> Optimal price [%s], has copied to your clipboard" % cpp_buy, '\n')
+        pyperclip.copy(str(cpp_buy))
+    else:
+        print(">>> Price is unacceptable\n")
     start()
 
 
@@ -70,4 +80,5 @@ def start():  # Launch by pressing Enter
         start()
 
 
+ReductionInit()
 start()
