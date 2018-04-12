@@ -15,7 +15,7 @@ def PriceConverter():
         cpp_buy = 0
     pyperclip.copy(str(cpp_buy))
     print(">>> Optimal price", "[", cpp_buy, "]",
-          "is copied to your clipboard\n")
+          "has copied to your clipboard\n")
     start()
 
 
