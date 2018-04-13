@@ -23,7 +23,8 @@ def PriceConverter():
         cpp_buy = 0
     if cpp_buy > 0:
         print(
-            ">>> Optimal price [%s], has copied to your clipboard" % cpp_buy, '\n')
+            ">>> Optimal price [%s] has copied to your clipboard"
+            % cpp_buy, '\n')
         pyperclip.copy(str(cpp_buy))
     else:
         print(">>> Price is unacceptable\n")
