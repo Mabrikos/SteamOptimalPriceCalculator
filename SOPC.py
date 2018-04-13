@@ -32,26 +32,26 @@ def PriceConverter():
 
 
 def RegexSearch():
-    global ps, psl
+    global ps, ps_length
     priceRegex = re.compile(r'\d?\d\,\d?\d?')  # Search by type 00,00
     prices = priceRegex.findall(pyperclip.paste())
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
     ps = list(set(prices))
-    psl = len(ps)
+    ps_length = len(ps)
 
 
 def PriceCalculator():
     global cpp
     while True:
         RegexSearch()
-        if psl < 2:  # if list contains only 1 element
+        if ps_length < 2:  # if list contains only 1 element
             try:
                 cpp = ps[0]
                 PriceConverter()
             except IndexError:
                 start()
-        for i in range(psl):
+        for i in range(ps_length):
             cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
             if cp >= 20:
                 cpp = ps[i + 1]
