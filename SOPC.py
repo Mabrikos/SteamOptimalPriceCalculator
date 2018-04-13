@@ -38,8 +38,7 @@ def RegexSearch():
     prices = priceRegex.findall(pyperclip.paste())
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
-    ps = [el for el, _ in groupby(prices)]
-    ps.sort()
+    ps = list(set(prices))
     psl = len(ps)
 
 
