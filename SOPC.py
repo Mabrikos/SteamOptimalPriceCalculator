@@ -11,7 +11,7 @@ def ReductionInit():
     try:
         global per
         per = int(init) + 100
-    except:
+    except ValueError:
         print('Number is required')
         ReductionInit()
 
@@ -50,30 +50,28 @@ def PriceCalculator():
             try:
                 cpp = ps[0]
                 PriceConverter()
-            except:
+            except IndexError:
                 start()
-        try:
-            for i in range(psl):
-                cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
-                if cp >= 20:
-                    cpp = ps[i + 1]
-                    PriceConverter()
+        for i in range(psl):
+            cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
+            if cp >= 20:
+                cpp = ps[i + 1]
+                PriceConverter()
 
-                if cp < 20:
-                    test1 = ps[i - 1]  # last element
-                    test2 = ps[i]  # first element
-                    test_result = ((100 - ((test2 * 100) / test1)))
-                    if test_result > 15 < 48:
-                        cpp = ps[i]
-                        PriceConverter()
-                    if test_result < 15 > 5:
-                        cpp = ps[i]
-                        PriceConverter()
-                    else:
-                        # if crap above doesn't do his job => (last / first)
-                        cpp = ps[i - 1]
-                        PriceConverter()
-        except:
+            if cp < 20:
+                test1 = ps[i - 1]  # last element
+                test2 = ps[i]  # first element
+                test_result = ((100 - ((test2 * 100) / test1)))
+                if test_result > 15 < 48:
+                    cpp = ps[i]
+                    PriceConverter()
+                if test_result < 15 > 5:
+                    cpp = ps[i]
+                    PriceConverter()
+                else:
+                    # if crap above doesn't do his job => (last / first)
+                    cpp = ps[i - 1]
+                    PriceConverter()
             start()
 
         start()
