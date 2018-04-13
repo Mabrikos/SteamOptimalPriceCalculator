@@ -36,7 +36,8 @@ def RegexSearch():
     prices = priceRegex.findall(pyperclip.paste())
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
-    ps = list(set(prices))
+    ps = sorted(list(set(prices)))
+    print(ps)
     ps_length = len(ps)
 
 
@@ -50,6 +51,7 @@ def PriceCalculator():
                 PriceConverter()
             except IndexError:
                 start()
+
         for i in range(ps_length):
             cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
             if cp >= 20:
