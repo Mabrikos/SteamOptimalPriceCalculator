@@ -11,7 +11,7 @@ def ReductionInit():
     try:
         per = int(init) + 100
     except ValueError:
-        print('Number is required\n')
+        print('\n>>> Number is required\n')
         ReductionInit()
 
 
