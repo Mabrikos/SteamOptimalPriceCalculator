@@ -7,9 +7,9 @@ from itertools import groupby
 
 
 def ReductionInit():
+    global per
     init = input("Reduct price by, %: ")
     try:
-        global per
         per = int(init) + 100
     except ValueError:
         print('Number is required')
