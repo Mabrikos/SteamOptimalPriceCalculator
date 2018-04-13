@@ -3,7 +3,6 @@
 
 import re
 import pyperclip
-from itertools import groupby
 
 
 def ReductionInit():
