@@ -32,8 +32,7 @@ def PriceConverter():
 
 
 def RegexSearch():
-    global ps
-    global psl
+    global ps, psl
     priceRegex = re.compile(r'\d?\d\,\d?\d?')  # Search by type 00,00
     prices = priceRegex.findall(pyperclip.paste())
     prices = [w.replace(',', '.') for w in prices]
