@@ -3,7 +3,8 @@
 
 import re
 import pyperclip
-
+import sys
+sys.setrecursionlimit(10000)
 
 def ReductionInit():
     global per
