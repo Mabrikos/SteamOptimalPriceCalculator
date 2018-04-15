@@ -6,6 +6,7 @@ import pyperclip
 import sys
 sys.setrecursionlimit(10000)
 
+
 def ReductionInit():
     global per
     init = input("Reduct price by, %: ")
@@ -17,7 +18,7 @@ def ReductionInit():
 
 
 def PriceConverter():
-    cpp_buy = cpp / per * 100
+    cpp_buy = round((cpp / per * 100), 2)
     # Range of allowed prices (from 0.25 to 1.00)
     if cpp_buy < 0.25 or cpp_buy > 1.00:
         cpp_buy = 0
@@ -38,7 +39,6 @@ def RegexSearch():
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
     ps = sorted(list(set(prices)))
-    print(ps)
     ps_length = len(ps)
 
 
@@ -73,9 +73,8 @@ def PriceCalculator():
                     # if crap above doesn't do his job => (last / first)
                     cpp = ps[i - 1]
                     PriceConverter()
-            start()
 
-        start()
+    start()
 
 
 def start():  # Launch by pressing Enter
