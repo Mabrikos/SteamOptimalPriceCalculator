@@ -10,7 +10,6 @@ driver = webdriver.Chrome()
 def login():
     driver.get("http://store.steampowered.com")
     driver.find_element_by_class_name("global_action_link").click()
-
     driver.find_element_by_id("input_username").send_keys(usr)
     elem = driver.find_element_by_id("input_password")
     elem.send_keys(pwd)
