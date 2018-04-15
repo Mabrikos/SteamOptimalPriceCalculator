@@ -35,9 +35,11 @@ def OpenNewTab():
 
 
 def SourceScrapping():
-    with open("file.txt", 'w', encoding='utf-8') as f:
-    f.write(driver.page_source)
-    f.close()
+    p_source = driver.page_source
+    print(p_source)
+#    with open("file.txt", 'w', encoding='utf-8') as f:
+#    f.write(driver.page_source)
+#    f.close()
 
 
 login()
@@ -49,6 +51,10 @@ for i in range(10):
     open_tab = driver.find_element_by_xpath(
         '//*[@id="result_{}"]/div[2]'.format(i))
     OpenNewTab()
+time.sleep(20)
+for i in range(11):
+	driver.switch_to.window(driver.window_handles[i])
+	time.sleep(1)
 
 SourceScrapping()
 input()

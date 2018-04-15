@@ -39,6 +39,7 @@ def RegexSearch():
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
     ps = sorted(list(set(prices)))
+    print(ps)
     ps_length = len(ps)
 
 
