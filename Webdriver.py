@@ -3,11 +3,13 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 import pickle
 
 usr = input('Enter username: ')
 pwd = input('Enter password: ')
+print('\nLaunching browser...')
 driver = webdriver.Chrome()
 
 
@@ -25,13 +27,15 @@ def login():
 
 login()
 driver.get('https://steamcommunity.com/market/search?appid=570#p180_price_asc')
-# for i in range 10:
-# driver.find_element_by_xpath('//*[@id="result_{}"]/div[2]'.format(i)).send_keys(Keys.CONTROL + 't')
 lot_wait = WebDriverWait(driver, 10)
 lot_wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
-driver.find_element_by_xpath(
-    '//*[@id="result_0"]/div[2]').click()  # send_keys(Keys.CONTROL + 't')
+open_tab = driver.find_element_by_xpath('//*[@id="result_0"]/div[2]')
+ActionChains(driver) \
+	.key_down(Keys.CONTROL) \
+	.click(open_tab) \
+	.key_up(Keys.CONTROL) \
+	.perform()
 # Sourcecode scraping
 with open("file.txt", 'w', encoding='utf-8') as f:
     f.write(driver.page_source)
