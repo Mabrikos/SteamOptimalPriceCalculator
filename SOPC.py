@@ -4,15 +4,17 @@
 import re
 import pyperclip
 
-
-def ReductionInit():
-    global per
-    init = input("Reduct price by, %: ")
-    try:
-        per = int(init) + 100
-    except ValueError:
-        print('\n>>> Number is required\n')
-        ReductionInit()
+#enable for manual input
+#def ReductionInit():
+#    global per
+#    init = input("Reduct price by, %: ")
+#    try:
+#        per = int(init) + 100
+#    except ValueError:
+#        print('\n>>> Number is required\n')
+#        ReductionInit()
+per = 140 # Reduct by 40%
+print('Reduction is set to [%s%%]' % (per - 100))
 
 
 def PriceConverter():
@@ -85,5 +87,5 @@ def start():  # Launch by pressing Enter
         start()
 
 
-ReductionInit()
+# ReductionInit()
 start()
