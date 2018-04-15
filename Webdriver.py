@@ -32,10 +32,10 @@ lot_wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
 open_tab = driver.find_element_by_xpath('//*[@id="result_0"]/div[2]')
 ActionChains(driver) \
-	.key_down(Keys.CONTROL) \
-	.click(open_tab) \
-	.key_up(Keys.CONTROL) \
-	.perform()
+    .key_down(Keys.CONTROL) \
+    .click(open_tab) \
+    .key_up(Keys.CONTROL) \
+    .perform()
 # Sourcecode scraping
 with open("file.txt", 'w', encoding='utf-8') as f:
     f.write(driver.page_source)
