@@ -1,16 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
 import time
-import pickle
 
 usr = input('Enter username: ')
 pwd = input('Enter password: ')
 print('\nLaunching browser...')
 driver = webdriver.Chrome()
+wait = WebDriverWait(driver, 10)
 
 
 def login():
@@ -42,19 +42,33 @@ def SourceScrapping():
 #    f.close()
 
 
+def CheckOrdersAmount():
+    wait.until(EC.presence_of_element_located((
+        By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
+    elem = driver.find_element_by_xpath(
+        '//*[@id="market_commodity_buyrequests"]/span[1]')
+    ordersAmount = int(elem.text)
+    if ordersAmount < 100:
+        print('Not enough people wants this item')
+    else:
+        print('Orders amount is {}'.format(ordersAmount))
+
+
 login()
 driver.get('https://steamcommunity.com/market/search?appid=570#p180_price_asc')
-lot_wait = WebDriverWait(driver, 10)
-lot_wait.until(EC.presence_of_element_located(
+wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
+# Opening tabs
 for i in range(10):
     open_tab = driver.find_element_by_xpath(
         '//*[@id="result_{}"]/div[2]'.format(i))
     OpenNewTab()
 time.sleep(20)
-for i in range(11):
-	driver.switch_to.window(driver.window_handles[i])
-	time.sleep(1)
+# Switching between tabs from last to second
+for i in range(1, 11):
+    driver.switch_to.window(driver.window_handles[i])
+    CheckOrdersAmount()
+    time.sleep(1)
 
 SourceScrapping()
 input()
