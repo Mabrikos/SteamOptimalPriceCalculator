@@ -6,12 +6,27 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 import re
+import sys
+
+
+def ReductionInit():
+    global per
+    init = input("Reduct price by, %: ")
+    try:
+        per = int(init) + 100
+    except ValueError:
+        print('\n>>> Number is required\n')
+        ReductionInit()
+
+
+ReductionInit()
 
 usr = input('Enter username: ')
 pwd = input('Enter password: ')
 print('\nLaunching browser...')
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 10)
+sys.setrecursionlimit(10000)
 
 
 def login():
@@ -51,20 +66,22 @@ def CheckOrdersAmount():
     ordersAmount = int(elem.text)
     if ordersAmount < 100:
         print('Not enough people wants this item')
+        # close tab
     else:
         print('Orders amount is {}'.format(ordersAmount))
 
 
 def PriceConverter():
+    global optimalPrice
     cpp_buy = round((cpp / per * 100), 2)
     # Range of allowed prices (from 0.25 to 1.00)
     if cpp_buy < 0.25 or cpp_buy > 1.00:
         cpp_buy = 0
     if cpp_buy > 0:
         print(
-            ">>> Optimal price [%s] has copied to your clipboard"
+            ">>> Optimal price is [%s]"
             % cpp_buy, '\n')
-        pyperclip.copy(str(cpp_buy))
+        optimalPrice = cpp_buy
     else:
         print(">>> Price is unacceptable\n")
 
@@ -82,39 +99,39 @@ def RegexSearch():
 
 def PriceCalculator():
     global cpp
-    while True:
-        RegexSearch()
-        if ps_length < 2:  # if list contains only 1 element
-            try:
-                cpp = ps[0]
-                PriceConverter()
-            except IndexError:
-                print('Something went wrong...')
+    RegexSearch()
+    if ps_length < 2:  # if list contains only 1 element
+        try:
+            cpp = ps[0]
+            PriceConverter()
+        except IndexError:
+            print('Something went wrong...')
 
-        for i in range(ps_length):
-            cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
-            if cp >= 20:
-                cpp = ps[i + 1]
-                PriceConverter()
+    for i in range(ps_length):
+        cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
+        if cp >= 20:
+            cpp = ps[i + 1]
+            PriceConverter()
 
-            if cp < 20:
-                test1 = ps[i - 1]  # last element
-                test2 = ps[i]  # first element
-                test_result = ((100 - ((test2 * 100) / test1)))
-                if test_result > 15 < 48:
-                    cpp = ps[i]
-                    PriceConverter()
-                if test_result < 15 > 5:
-                    cpp = ps[i]
-                    PriceConverter()
-                else:
-                    # if crap above doesn't do his job => (last / first)
-                    cpp = ps[i - 1]
-                    PriceConverter()
+        if cp < 20:
+            test1 = ps[i - 1]  # last element
+            test2 = ps[i]  # first element
+            test_result = ((100 - ((test2 * 100) / test1)))
+            if test_result > 15 < 48:
+                cpp = ps[i]
+                PriceConverter()
+            if test_result < 15 > 5:
+                cpp = ps[i]
+                PriceConverter()
+            else:
+                # if crap above doesn't do his job => (last / first)
+                cpp = ps[i - 1]
+                PriceConverter()
+        break
 
 
 login()
-driver.get('https://steamcommunity.com/market/search?appid=570#p180_price_asc')
+driver.get('https://steamcommunity.com/market/search?appid=570#p200_price_asc')
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
 # Opening tabs
@@ -126,14 +143,22 @@ time.sleep(20)
 # Switching between tabs from last to second
 for i in range(1, 11):
     driver.switch_to.window(driver.window_handles[i])
-    CheckOrdersAmount()
-    elem = driver.find_element_by_id('searchResultsRows')
-    listings = elem.text
-    RegexSearch()
-    PriceCalculator()
-    # close tab function
-    time.sleep(1)
-    #newline
+
+    wait.until(EC.presence_of_element_located((
+        By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
+    elem = driver.find_element_by_xpath(
+        '//*[@id="market_commodity_buyrequests"]/span[1]')
+    ordersAmount = int(elem.text)
+    if ordersAmount < 100:
+        print('Not enough people wants this item')
+        # close tab
+    else:
+        print('Orders amount is {}'.format(ordersAmount))
+        elem = driver.find_element_by_id('searchResultsRows')
+        listings = elem.text
+        PriceCalculator()
+        # close tab
+        time.sleep(1)
 
 SourceScrapping()
 input()
