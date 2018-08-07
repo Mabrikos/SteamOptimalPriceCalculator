@@ -120,14 +120,15 @@ def PriceCalculator():
             if test_result > 15 < 48:
                 cpp = ps[i]
                 PriceConverter()
-            if test_result < 15 > 5:
-                cpp = ps[i]
-                PriceConverter()
             else:
-                # if crap above doesn't do his job => (last / first)
-                cpp = ps[i - 1]
-                PriceConverter()
-        break
+                if test_result < 15 > 5:
+                    cpp = ps[i]
+                    PriceConverter()
+                else:
+                    # if crap above doesn't do his job => (last / first)
+                    cpp = ps[i - 1]
+                    PriceConverter()
+            break
 
 
 login()
@@ -157,9 +158,9 @@ for i in range(1, 11):
         elem = driver.find_element_by_id('searchResultsRows')
         listings = elem.text
         PriceCalculator()
-        # close tab
         time.sleep(1)
+        # close tab
 
-SourceScrapping()
+# SourceScrapping()
 input()
 driver.close()
