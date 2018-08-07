@@ -132,7 +132,6 @@ for i in range(1, 11):
     RegexSearch()
     PriceCalculator()
     # close tab function
-    time.sleep(1)
     #newline
 
 SourceScrapping()
