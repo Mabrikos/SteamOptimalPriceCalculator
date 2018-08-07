@@ -58,17 +58,17 @@ def SourceScrapping():
 #    f.close()
 
 
-def CheckOrdersAmount():
-    wait.until(EC.presence_of_element_located((
-        By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
-    elem = driver.find_element_by_xpath(
-        '//*[@id="market_commodity_buyrequests"]/span[1]')
-    ordersAmount = int(elem.text)
-    if ordersAmount < 100:
-        print('Not enough people wants this item')
-        # close tab
-    else:
-        print('Orders amount is {}'.format(ordersAmount))
+# def CheckOrdersAmount():
+#     wait.until(EC.presence_of_element_located((
+#         By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
+#     elem = driver.find_element_by_xpath(
+#         '//*[@id="market_commodity_buyrequests"]/span[1]')
+#     ordersAmount = int(elem.text)
+#     if ordersAmount < 100:
+#         print('Not enough people wants this item')
+#         # close tab
+#     else:
+#         print('Orders amount is {}'.format(ordersAmount))
 
 
 def PriceConverter():
@@ -144,7 +144,7 @@ time.sleep(20)
 # Switching between tabs from last to second
 for i in range(1, 11):
     driver.switch_to.window(driver.window_handles[i])
-
+# Checking orders amount
     wait.until(EC.presence_of_element_located((
         By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
     elem = driver.find_element_by_xpath(
@@ -154,11 +154,14 @@ for i in range(1, 11):
         print('Not enough people wants this item')
         # close tab
     else:
+        # Calculating optimal price
         print('Orders amount is {}'.format(ordersAmount))
         elem = driver.find_element_by_id('searchResultsRows')
         listings = elem.text
         PriceCalculator()
         time.sleep(1)
+        # check order interface
+        # buy item
         # close tab
 
 # SourceScrapping()
