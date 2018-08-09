@@ -4,9 +4,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 import time
 import re
 import sys
+#import os
 
 
 def ReductionInit():
@@ -21,12 +23,17 @@ def ReductionInit():
 
 ReductionInit()
 
-usr = input('Enter username: ')
-pwd = input('Enter password: ')
+usr = 'laminarius'  # input('Enter username: ')
+pwd = 'q1597532584561245Q'  # input('Enter password: ')
 print('\nLaunching browser...')
-driver = webdriver.Chrome()
+# connect Steam Trader Helper extension
+chrome_options = Options()
+chrome_options.add_extension(
+    'D:\\Documents\\Git\\SteamOptimalPriceCalculator\\Steam-Inventory-Helper_v1.15.0.crx')
+driver = webdriver.Chrome(chrome_options=chrome_options)
 wait = WebDriverWait(driver, 10)
 sys.setrecursionlimit(10000)
+itemsAmount = '20'
 
 
 def login():
@@ -50,9 +57,9 @@ def OpenNewTab():
         .perform()
 
 
-def SourceScrapping():
-    p_source = driver.page_source
-    print(p_source)
+# def SourceScrapping():
+#     p_source = driver.page_source
+#     print(p_source)
 #    with open("file.txt", 'w', encoding='utf-8') as f:
 #    f.write(driver.page_source)
 #    f.close()
@@ -81,7 +88,7 @@ def PriceConverter():
         print(
             ">>> Optimal price is [%s]"
             % cpp_buy, '\n')
-        optimalPrice = cpp_buy
+        optimalPrice = str(cpp_buy)
     else:
         print(">>> Price is unacceptable\n")
 
@@ -152,7 +159,6 @@ for i in range(1, 11):
     ordersAmount = int(elem.text)
     if ordersAmount < 100:
         print('Not enough people wants this item')
-        # close tab
     else:
         # Calculating optimal price
         print('Orders amount is {}'.format(ordersAmount))
@@ -160,8 +166,25 @@ for i in range(1, 11):
         listings = elem.text
         PriceCalculator()
         time.sleep(1)
-        # check order interface
-        # buy item
+        # small interface
+        driver.find_element_by_xpath(
+            '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+        driver.find_element_by_xpath(
+            '//*[@id="market_buy_commodity_input_price"]').clear()
+        driver.find_element_by_xpath(
+            '//*[@id="market_buy_commodity_input_price"]').send_keys(optimalPrice)
+        driver.find_element_by_xpath(
+            '//*[@id="market_buy_commodity_input_quantity"]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="market_buy_commodity_input_quantity"]').clear()
+        driver.find_element_by_xpath(
+            '//*[@id="market_buy_commodity_input_quantity"]').send_keys(itemsAmount)
+        driver.find_element_by_xpath(
+            '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="market_buyorder_dialog_purchase"]').click()
+        # huge interface
+
         # close tab
 
 # SourceScrapping()
