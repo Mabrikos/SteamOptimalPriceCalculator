@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 import sys
-#import os
+# import os
 
 
 def ReductionInit():
@@ -23,17 +23,18 @@ def ReductionInit():
 
 ReductionInit()
 
-usr = 'laminarius'  # input('Enter username: ')
-pwd = 'q1597532584561245Q'  # input('Enter password: ')
+usr = input('Enter username: ')
+pwd = input('Enter password: ')
 print('\nLaunching browser...')
 # connect Steam Trader Helper extension
 chrome_options = Options()
 chrome_options.add_extension(
     'D:\\Documents\\Git\\SteamOptimalPriceCalculator\\Steam-Inventory-Helper_v1.15.0.crx')
 driver = webdriver.Chrome(chrome_options=chrome_options)
+# -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
 sys.setrecursionlimit(10000)
-itemsAmount = '20'
+itemsAmount = '10'  # amount of items to buy
 
 
 def login():
@@ -57,32 +58,11 @@ def OpenNewTab():
         .perform()
 
 
-# def SourceScrapping():
-#     p_source = driver.page_source
-#     print(p_source)
-#    with open("file.txt", 'w', encoding='utf-8') as f:
-#    f.write(driver.page_source)
-#    f.close()
-
-
-# def CheckOrdersAmount():
-#     wait.until(EC.presence_of_element_located((
-#         By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
-#     elem = driver.find_element_by_xpath(
-#         '//*[@id="market_commodity_buyrequests"]/span[1]')
-#     ordersAmount = int(elem.text)
-#     if ordersAmount < 100:
-#         print('Not enough people wants this item')
-#         # close tab
-#     else:
-#         print('Orders amount is {}'.format(ordersAmount))
-
-
 def PriceConverter():
     global optimalPrice
     cpp_buy = round((cpp / per * 100), 2)
     # Range of allowed prices (from 0.25 to 1.00)
-    if cpp_buy < 0.25 or cpp_buy > 1.00:
+    if cpp_buy < 0.25:  # or cpp_buy > 1.00:
         cpp_buy = 0
     if cpp_buy > 0:
         print(
@@ -107,19 +87,19 @@ def RegexSearch():
 def PriceCalculator():
     global cpp
     RegexSearch()
-    if ps_length < 2:  # if list contains only 1 element
+    for i in range(ps_length):
         try:
+            global cp
+            cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
+            if cp >= 20:
+                cpp = ps[i + 1]
+                PriceConverter()
+                break
+        except IndexError:
             cpp = ps[0]
             PriceConverter()
-        except IndexError:
-            print('Something went wrong...')
-
-    for i in range(ps_length):
+            break
         cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
-        if cp >= 20:
-            cpp = ps[i + 1]
-            PriceConverter()
-
         if cp < 20:
             test1 = ps[i - 1]  # last element
             test2 = ps[i]  # first element
@@ -143,50 +123,67 @@ driver.get('https://steamcommunity.com/market/search?appid=570#p200_price_asc')
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
 # Opening tabs
-for i in range(10):
-    open_tab = driver.find_element_by_xpath(
-        '//*[@id="result_{}"]/div[2]'.format(i))
-    OpenNewTab()
-time.sleep(20)
-# Switching between tabs from last to second
-for i in range(1, 11):
-    driver.switch_to.window(driver.window_handles[i])
-# Checking orders amount
-    wait.until(EC.presence_of_element_located((
-        By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
-    elem = driver.find_element_by_xpath(
-        '//*[@id="market_commodity_buyrequests"]/span[1]')
-    ordersAmount = int(elem.text)
-    if ordersAmount < 100:
-        print('Not enough people wants this item')
-    else:
-        # Calculating optimal price
-        print('Orders amount is {}'.format(ordersAmount))
-        elem = driver.find_element_by_id('searchResultsRows')
-        listings = elem.text
-        PriceCalculator()
-        time.sleep(1)
-        # small interface
-        driver.find_element_by_xpath(
-            '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
-        driver.find_element_by_xpath(
-            '//*[@id="market_buy_commodity_input_price"]').clear()
-        driver.find_element_by_xpath(
-            '//*[@id="market_buy_commodity_input_price"]').send_keys(optimalPrice)
-        driver.find_element_by_xpath(
-            '//*[@id="market_buy_commodity_input_quantity"]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="market_buy_commodity_input_quantity"]').clear()
-        driver.find_element_by_xpath(
-            '//*[@id="market_buy_commodity_input_quantity"]').send_keys(itemsAmount)
-        driver.find_element_by_xpath(
-            '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="market_buyorder_dialog_purchase"]').click()
-        # huge interface
 
-        # close tab
 
-# SourceScrapping()
+def BuyItems():
+    global open_tab
+    global listings
+    for i in range(10):
+        open_tab = driver.find_element_by_xpath(
+            '//*[@id="result_{}"]/div[2]'.format(i))
+        OpenNewTab()
+    # time.sleep(20)
+    # Switching between tabs from last to second
+    for i in range(1, 11):
+        driver.switch_to.window(driver.window_handles[i])
+    # Checking orders amount, "try" made because there can be no orders
+        try:
+            wait.until(EC.presence_of_element_located((
+                By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
+            elem = driver.find_element_by_xpath(
+                '//*[@id="market_commodity_buyrequests"]/span[1]')
+            ordersAmount = int(elem.text)
+        except:
+            ordersAmount = 0
+
+        if ordersAmount < 100:
+            print('Not enough people wants this item')
+        else:
+            # Calculating optimal price
+            print('Orders amount is {}'.format(ordersAmount))
+            elem = driver.find_element_by_id('searchResultsRows')
+            listings = elem.text
+            PriceCalculator()
+            time.sleep(0)
+            # small interface
+            driver.find_element_by_xpath(
+                '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+            driver.find_element_by_xpath(
+                '//*[@id="market_buy_commodity_input_price"]').clear()
+            driver.find_element_by_xpath(
+                '//*[@id="market_buy_commodity_input_price"]').send_keys(optimalPrice)
+            driver.find_element_by_xpath(
+                '//*[@id="market_buy_commodity_input_quantity"]').click()
+            driver.find_element_by_xpath(
+                '//*[@id="market_buy_commodity_input_quantity"]').clear()
+            driver.find_element_by_xpath(
+                '//*[@id="market_buy_commodity_input_quantity"]').send_keys(itemsAmount)
+            driver.find_element_by_xpath(
+                '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
+            driver.find_element_by_xpath(
+                '//*[@id="market_buyorder_dialog_purchase"]').click()
+
+
+while True:
+    BuyItems()
+    # closing tabs
+    for i in range(1, 11):
+        driver.switch_to_window(driver.window_handles[1])
+        driver.close()
+    # pressing "next(>)" button
+    driver.switch_to_window(driver.window_handles[0])
+    driver.find_element_by_xpath('//*[@id="searchResults_btn_next"]').click()
+    time.sleep(1.5)
+
 input()
 driver.close()
