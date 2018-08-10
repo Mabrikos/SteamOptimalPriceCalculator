@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 import sys
-# import os
+import os
 
 
 def ReductionInit():
@@ -27,9 +27,10 @@ usr = input('Enter username: ')
 pwd = input('Enter password: ')
 print('\nLaunching browser...')
 # connect Steam Trader Helper extension
+directory = os.getcwd()
+path = str(os.path.join(directory, 'Steam-Inventory-Helper_v1.15.0.crx'))
 chrome_options = Options()
-chrome_options.add_extension(
-    'D:\\Documents\\Git\\SteamOptimalPriceCalculator\\Steam-Inventory-Helper_v1.15.0.crx')
+chrome_options.add_extension(path)
 driver = webdriver.Chrome(chrome_options=chrome_options)
 # -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
