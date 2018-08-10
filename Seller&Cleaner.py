@@ -42,7 +42,8 @@ def login():
 login()
 driver.get('https://steamcommunity.com/')
 driver.get('https://steamcommunity.com/market/')
-time.sleep(20)
+waiter.until(EC.invisibility_of_element_located((
+    By.XPATH, '//*[@id="_priceQueueCont"]')))
 driver.find_element_by_xpath('//*[@id="my_listing_pagesize_100"]').click()
 time.sleep(10)
 price_checker_box = driver.find_element_by_xpath('//*[@id="_priceQueueCont"]')
@@ -61,7 +62,7 @@ else:
         '//*[@id="tabContentsMyActiveMarketListingsTable"]/div[1]/div/div[3]/a[1]/span[2]').click()
     driver.find_element_by_xpath(
         '//*[@id="tabContentsMyActiveMarketListingsTable"]/div[1]/div/div[3]/a[2]').click()
-
+time.sleep(5)
 # open inventory
 driver.find_element_by_xpath(
     '//*[@id="global_header"]/div/div[2]/a[3]').click()
@@ -71,12 +72,15 @@ driver.find_element_by_xpath(
 driver.find_element_by_xpath('//*[@id="inventory_link_570"]').click()
 driver.set_window_size(891, 1006)
 # waiting for items to load
-try:
-    item_wait.until(EC.visibility_of_element_located(
-        (By.XPATH, '//*[@id="570_2_14393858283"]/img')))
-except:
-    pass
-# time.sleep(30)
+driver.find_element_by_xpath(
+    '//*[@id="inventory_76561198339646027_570_2"]/div[1]/div[1]').click()
+time.sleep(1)
+waiter.until(EC.invisibility_of_element_located((
+    By.XPATH, '//*[@id="iteminfo1_item_market_actions"]/div/div[2]/img')))
+driver.find_element_by_xpath('/html/body/div[8]/div/div[2]').click()
+
+waiter.until(EC.visibility_of_element_located((
+    By.XPATH, '//*[@id="Lnk_Sellall"]')))
 driver.find_element_by_xpath('//*[@id="Lnk_Sellall"]').click()
 driver.find_element_by_xpath('//*[@id="Lnk_ShowSellMulti"]').click()
 wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="autosell"]')))
