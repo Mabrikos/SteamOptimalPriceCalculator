@@ -34,7 +34,7 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 # -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
 sys.setrecursionlimit(10000)
-itemsAmount = '10'  # amount of items to buy
+itemsAmount = '5'  # amount of items to buy
 
 
 def login():
@@ -44,9 +44,10 @@ def login():
     elem = driver.find_element_by_id("input_password")
     elem.send_keys(pwd)
     elem.send_keys(Keys.RETURN)
-    time.sleep(15)
-    driver.find_element_by_id('twofactorcode_entry').send_keys(Keys.RETURN)
-    time.sleep(20)
+    time.sleep(10)
+    loginWaiter = WebDriverWait(driver, 60 * 5)
+    loginWaiter.until(EC.presence_of_element_located(
+        (By.XPATH, '//*[@id="account_pulldown"]')))
     print('Successfully logged in')
 
 
@@ -64,6 +65,7 @@ def PriceConverter():
     # Range of allowed prices (from 0.25 to 1.00)
     if cpp_buy < 0.25:  # or cpp_buy > 1.00:
         cpp_buy = 0
+        optimalPrice = str(cpp_buy)
     if cpp_buy > 0:
         print(
             ">>> Optimal price is [%s]"
@@ -122,7 +124,6 @@ login()
 driver.get('https://steamcommunity.com/market/search?appid=570#p200_price_asc')
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
-# Opening tabs
 
 
 def BuyItems():
@@ -151,13 +152,21 @@ def BuyItems():
         else:
             # Calculating optimal price
             print('Orders amount is {}'.format(ordersAmount))
-            elem = driver.find_element_by_id('searchResultsRows')
-            listings = elem.text
+            try:
+                elem = driver.find_element_by_id('searchResultsRows')
+                listings = elem.text
+            except:
+                elem = driver.find_element_by_id(
+                    'market_commodity_forsale_table')
+                listings = elem.text
             PriceCalculator()
-            time.sleep(0)
-            # small interface
-            driver.find_element_by_xpath(
-                '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+            # time.sleep(1)
+            try:
+                driver.find_element_by_xpath(
+                    '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+            except:
+                driver.find_element_by_xpath(
+                    '//*[@id="market_commodity_order_spread"]/div[1]/div/div[1]/a').click()
             driver.find_element_by_xpath(
                 '//*[@id="market_buy_commodity_input_price"]').clear()
             driver.find_element_by_xpath(
