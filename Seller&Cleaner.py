@@ -21,6 +21,7 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 # -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
 waiter = WebDriverWait(driver, 60 * 5)
+item_wait = WebDriverWait(driver, 60)
 sys.setrecursionlimit(10000)
 Percentage = '-5'
 
@@ -41,7 +42,7 @@ def login():
 login()
 driver.get('https://steamcommunity.com/')
 driver.get('https://steamcommunity.com/market/')
-time.sleep(10)
+time.sleep(20)
 driver.find_element_by_xpath('//*[@id="my_listing_pagesize_100"]').click()
 time.sleep(10)
 price_checker_box = driver.find_element_by_xpath('//*[@id="_priceQueueCont"]')
@@ -70,8 +71,11 @@ driver.find_element_by_xpath(
 driver.find_element_by_xpath('//*[@id="inventory_link_570"]').click()
 driver.set_window_size(891, 1006)
 # waiting for items to load
-waiter.until(EC.visibility_of_element_located(
-    (By.XPATH, '//*[@id="570_2_14393858283"]/img')))
+try:
+    item_wait.until(EC.visibility_of_element_located(
+        (By.XPATH, '//*[@id="570_2_14393858283"]/img')))
+except:
+    pass
 # time.sleep(30)
 driver.find_element_by_xpath('//*[@id="Lnk_Sellall"]').click()
 driver.find_element_by_xpath('//*[@id="Lnk_ShowSellMulti"]').click()
