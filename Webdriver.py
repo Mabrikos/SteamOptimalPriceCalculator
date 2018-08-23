@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 import sys
-# import os
+import os
 
 
 def ReductionInit():
@@ -25,16 +25,18 @@ ReductionInit()
 
 usr = input('Enter username: ')
 pwd = input('Enter password: ')
+itemsPage = input('Enter items page: ')
+itemsAmount = input('Enter items amount: ')  # amount of items to buy
 print('\nLaunching browser...')
 # connect Steam Trader Helper extension
-chrome_options = Options()
-chrome_options.add_extension(
-    'D:\\Documents\\Git\\SteamOptimalPriceCalculator\\Steam-Inventory-Helper_v1.15.0.crx')
-driver = webdriver.Chrome(chrome_options=chrome_options)
+# directory = os.getcwd()
+# path = str(os.path.join(directory, 'Steam-Inventory-Helper_v1.15.0.crx'))
+# chrome_options = Options()
+# chrome_options.add_extension(path)
+driver = webdriver.Firefox()  # chrome_options=chrome_options)
 # -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
 sys.setrecursionlimit(10000)
-itemsAmount = '10'  # amount of items to buy
 
 
 def login():
@@ -44,9 +46,10 @@ def login():
     elem = driver.find_element_by_id("input_password")
     elem.send_keys(pwd)
     elem.send_keys(Keys.RETURN)
-    time.sleep(15)
-    driver.find_element_by_id('twofactorcode_entry').send_keys(Keys.RETURN)
-    time.sleep(20)
+    time.sleep(10)
+    loginWaiter = WebDriverWait(driver, 60 * 5)
+    loginWaiter.until(EC.presence_of_element_located(
+        (By.XPATH, '//*[@id="account_pulldown"]')))
     print('Successfully logged in')
 
 
@@ -64,6 +67,7 @@ def PriceConverter():
     # Range of allowed prices (from 0.25 to 1.00)
     if cpp_buy < 0.25:  # or cpp_buy > 1.00:
         cpp_buy = 0
+        optimalPrice = str(cpp_buy)
     if cpp_buy > 0:
         print(
             ">>> Optimal price is [%s]"
@@ -119,10 +123,11 @@ def PriceCalculator():
 
 
 login()
-driver.get('https://steamcommunity.com/market/search?appid=570#p200_price_asc')
+driver.get(
+    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
+
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
-# Opening tabs
 
 def BuyItems():
     global open_tab
@@ -137,6 +142,7 @@ def BuyItems():
         driver.switch_to.window(driver.window_handles[i])
     # Checking orders amount, "try" made because there can be no orders
         try:
+            buyReqWait = WebDriverWait(driver, 0)
             wait.until(EC.presence_of_element_located((
                 By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
             elem = driver.find_element_by_xpath(
@@ -144,19 +150,32 @@ def BuyItems():
             ordersAmount = int(elem.text)
         except:
             ordersAmount = 0
-
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="tabContentsMyListings"]/div/h3/span[1]')
+            ordersAmount = 0
+        except:
+            pass
         if ordersAmount < 100:
-            print('Not enough people wants this item')
+            print("Not enough people wants this item or you've already ordered it")
         else:
             # Calculating optimal price
             print('Orders amount is {}'.format(ordersAmount))
-            elem = driver.find_element_by_id('searchResultsRows')
-            listings = elem.text
+            try:
+                elem = driver.find_element_by_id('searchResultsRows')
+                listings = elem.text
+            except:
+                elem = driver.find_element_by_id(
+                    'market_commodity_forsale_table')
+                listings = elem.text
             PriceCalculator()
-            time.sleep(0)
-            # small interface
-            driver.find_element_by_xpath(
-                '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+            # time.sleep(1)
+            try:
+                driver.find_element_by_xpath(
+                    '//*[@id="market_buyorder_info"]/div[1]/div[1]/a').click()
+            except:
+                driver.find_element_by_xpath(
+                    '//*[@id="market_commodity_order_spread"]/div[1]/div/div[1]/a').click()
             driver.find_element_by_xpath(
                 '//*[@id="market_buy_commodity_input_price"]').clear()
             driver.find_element_by_xpath(
@@ -171,6 +190,14 @@ def BuyItems():
                 '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
             driver.find_element_by_xpath(
                 '//*[@id="market_buyorder_dialog_purchase"]').click()
+            # try:
+            #     driver.find_element_by_xpath(
+            #         '//*[@id="market_buyorder_dialog_error_text"]')
+            #     print("Can't buy any more items")
+            #     input()
+            #     driver.quit()
+            # except:
+            #     pass
 
 
 while True:
