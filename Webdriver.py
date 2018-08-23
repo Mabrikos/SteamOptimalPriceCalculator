@@ -28,14 +28,10 @@ pwd = input('Enter password: ')
 itemsPage = input('Enter items page: ')
 itemsAmount = input('Enter items amount: ')  # amount of items to buy
 print('\nLaunching browser...')
-# connect Steam Trader Helper extension
-# directory = os.getcwd()
-# path = str(os.path.join(directory, 'Steam-Inventory-Helper_v1.15.0.crx'))
-# chrome_options = Options()
-# chrome_options.add_extension(path)
-driver = webdriver.Firefox()  # chrome_options=chrome_options)
-# -----------------------------------------------------------
-wait = WebDriverWait(driver, 10)
+
+driver = webdriver.Firefox()
+
+wait = WebDriverWait(driver, 3)
 sys.setrecursionlimit(10000)
 
 
@@ -142,7 +138,6 @@ def BuyItems():
         driver.switch_to.window(driver.window_handles[i])
     # Checking orders amount, "try" made because there can be no orders
         try:
-            buyReqWait = WebDriverWait(driver, 0)
             wait.until(EC.presence_of_element_located((
                 By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
             elem = driver.find_element_by_xpath(
