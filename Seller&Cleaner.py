@@ -64,45 +64,45 @@ else:
         '//*[@id="tabContentsMyActiveMarketListingsTable"]/div[1]/div/div[3]/a[2]').click()
 time.sleep(5)
 # open inventory
-driver.find_element_by_xpath(
-    '//*[@id="global_header"]/div/div[2]/a[3]').click()
-driver.find_element_by_xpath(
-    '//*[@id="friendactivity_right_column"]/div/div[3]/div[7]/a/span').click()
-# opening dota 2 inventory
-driver.find_element_by_xpath('//*[@id="inventory_link_570"]').click()
-driver.set_window_size(891, 1006)
-# waiting for items to load
-driver.find_element_by_xpath(
-    '//*[@id="inventory_76561198339646027_570_2"]/div[1]/div[1]').click()
-time.sleep(1)
-waiter.until(EC.invisibility_of_element_located((
-    By.XPATH, '//*[@id="iteminfo1_item_market_actions"]/div/div[2]/img')))
-driver.find_element_by_xpath('/html/body/div[8]/div/div[2]').click()
+# driver.find_element_by_xpath(
+#     '//*[@id="global_header"]/div/div[2]/a[3]').click()
+# driver.find_element_by_xpath(
+#     '//*[@id="friendactivity_right_column"]/div/div[3]/div[7]/a/span').click()
+# # opening dota 2 inventory
+# driver.find_element_by_xpath('//*[@id="inventory_link_570"]').click()
+# driver.set_window_size(891, 1006)
+# # waiting for items to load
+# driver.find_element_by_xpath(
+#     '//*[@id="inventory_76561198339646027_570_2"]/div[1]/div[1]').click()
+# time.sleep(1)
+# waiter.until(EC.invisibility_of_element_located((
+#     By.XPATH, '//*[@id="iteminfo1_item_market_actions"]/div/div[2]/img')))
+# driver.find_element_by_xpath('/html/body/div[8]/div/div[2]').click()
 
-waiter.until(EC.visibility_of_element_located((
-    By.XPATH, '//*[@id="Lnk_Sellall"]')))
-driver.find_element_by_xpath('//*[@id="Lnk_Sellall"]').click()
-driver.find_element_by_xpath('//*[@id="Lnk_ShowSellMulti"]').click()
-wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="autosell"]')))
-driver.find_element_by_xpath('//*[@id="autosell"]').click()
-driver.find_element_by_xpath(
-    '//*[@id="market_sell_dialog_accept_ssa"]').click()
-driver.find_element_by_xpath('//*[@id="ck_autoadjust"]').click()
-driver.find_element_by_xpath('//*[@id="cb_adtype"]').click()
-driver.find_element_by_xpath('//*[@id="cb_adtype"]/option[2]').click()
-driver.find_element_by_xpath('//*[@id="Txt_adjust"]').click()
-ActionChains(driver) \
-    .send_keys(Keys.ARROW_RIGHT) \
-    .send_keys(Keys.BACKSPACE) \
-    .perform() \
+# waiter.until(EC.visibility_of_element_located((
+#     By.XPATH, '//*[@id="Lnk_Sellall"]')))
+# driver.find_element_by_xpath('//*[@id="Lnk_Sellall"]').click()
+# driver.find_element_by_xpath('//*[@id="Lnk_ShowSellMulti"]').click()
+# wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="autosell"]')))
+# driver.find_element_by_xpath('//*[@id="autosell"]').click()
+# driver.find_element_by_xpath(
+#     '//*[@id="market_sell_dialog_accept_ssa"]').click()
+# driver.find_element_by_xpath('//*[@id="ck_autoadjust"]').click()
+# driver.find_element_by_xpath('//*[@id="cb_adtype"]').click()
+# driver.find_element_by_xpath('//*[@id="cb_adtype"]/option[2]').click()
+# driver.find_element_by_xpath('//*[@id="Txt_adjust"]').click()
+# ActionChains(driver) \
+#     .send_keys(Keys.ARROW_RIGHT) \
+#     .send_keys(Keys.BACKSPACE) \
+#     .perform() \
 
-driver.find_element_by_xpath('//*[@id="Txt_adjust"]').send_keys(Percentage)
-driver.find_element_by_xpath(
-    '//*[@id="market_sell_dialog_accept"]/span').click()
-wait.until(EC.visibility_of_element_located((
-    By.XPATH, '//*[@id="market_sell_dialog_ok"]/span')))
-driver.find_element_by_xpath('//*[@id="market_sell_dialog_ok"]/span').click()
-waiter.until(EC.invisibility_of_element_located(
-    (By.XPATH, '//*[@id="market_sell_dialog"]/div[2]/div')))
-print('Finished')
+# driver.find_element_by_xpath('//*[@id="Txt_adjust"]').send_keys(Percentage)
+# driver.find_element_by_xpath(
+#     '//*[@id="market_sell_dialog_accept"]/span').click()
+# wait.until(EC.visibility_of_element_located((
+#     By.XPATH, '//*[@id="market_sell_dialog_ok"]/span')))
+# driver.find_element_by_xpath('//*[@id="market_sell_dialog_ok"]/span').click()
+# waiter.until(EC.invisibility_of_element_located(
+#     (By.XPATH, '//*[@id="market_sell_dialog"]/div[2]/div')))
+# print('Finished')
 input()

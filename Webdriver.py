@@ -25,17 +25,18 @@ ReductionInit()
 
 usr = input('Enter username: ')
 pwd = input('Enter password: ')
+itemsPage = input('Enter items page: ')
+itemsAmount = input('Enter items amount: ')  # amount of items to buy
 print('\nLaunching browser...')
 # connect Steam Trader Helper extension
-directory = os.getcwd()
-path = str(os.path.join(directory, 'Steam-Inventory-Helper_v1.15.0.crx'))
-chrome_options = Options()
-chrome_options.add_extension(path)
-driver = webdriver.Chrome(chrome_options=chrome_options)
+# directory = os.getcwd()
+# path = str(os.path.join(directory, 'Steam-Inventory-Helper_v1.15.0.crx'))
+# chrome_options = Options()
+# chrome_options.add_extension(path)
+driver = webdriver.Firefox()  # chrome_options=chrome_options)
 # -----------------------------------------------------------
 wait = WebDriverWait(driver, 10)
 sys.setrecursionlimit(10000)
-itemsAmount = '5'  # amount of items to buy
 
 
 def login():
@@ -122,7 +123,9 @@ def PriceCalculator():
 
 
 login()
-driver.get('https://steamcommunity.com/market/search?appid=570#p200_price_asc')
+driver.get(
+    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
+
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
 
@@ -140,6 +143,7 @@ def BuyItems():
         driver.switch_to.window(driver.window_handles[i])
     # Checking orders amount, "try" made because there can be no orders
         try:
+            buyReqWait = WebDriverWait(driver, 0)
             wait.until(EC.presence_of_element_located((
                 By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
             elem = driver.find_element_by_xpath(
@@ -147,9 +151,14 @@ def BuyItems():
             ordersAmount = int(elem.text)
         except:
             ordersAmount = 0
-
+        try:
+            driver.find_element_by_xpath(
+                '//*[@id="tabContentsMyListings"]/div/h3/span[1]')
+            ordersAmount = 0
+        except:
+            pass
         if ordersAmount < 100:
-            print('Not enough people wants this item')
+            print("Not enough people wants this item or you've already ordered it")
         else:
             # Calculating optimal price
             print('Orders amount is {}'.format(ordersAmount))
@@ -182,6 +191,14 @@ def BuyItems():
                 '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
             driver.find_element_by_xpath(
                 '//*[@id="market_buyorder_dialog_purchase"]').click()
+            # try:
+            #     driver.find_element_by_xpath(
+            #         '//*[@id="market_buyorder_dialog_error_text"]')
+            #     print("Can't buy any more items")
+            #     input()
+            #     driver.quit()
+            # except:
+            #     pass
 
 
 while True:
