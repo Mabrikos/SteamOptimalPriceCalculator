@@ -15,7 +15,11 @@ def ReductionInit():
     global per
     init = input("Reduct price by, %: ")
     try:
-        per = int(init) + 100
+        if int(init) > 100 or int(init) < 1:
+            print('\n>>> Must be in range from 1 to 100\n')
+            ReductionInit()
+        else:
+            per = int(init) + 100
     except ValueError:
         print('\n>>> Number is required\n')
         ReductionInit()
