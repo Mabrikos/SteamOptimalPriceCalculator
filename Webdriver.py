@@ -120,7 +120,7 @@ def PriceCalculator():
 
 login()
 driver.get(
-    'https://steamcommunity.com/market/search?appid=730&q=Граффити#p{}_price_asc'.format(str(itemsPage)))
+    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
 
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
