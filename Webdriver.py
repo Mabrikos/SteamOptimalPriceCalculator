@@ -120,10 +120,11 @@ def PriceCalculator():
 
 login()
 driver.get(
-    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
+    'https://steamcommunity.com/market/search?appid=730&q=Граффити#p{}_price_asc'.format(str(itemsPage)))
 
 wait.until(EC.presence_of_element_located(
     (By.XPATH, '//*[@id="result_0"]/div[2]')))
+
 
 def BuyItems():
     global open_tab
@@ -146,9 +147,11 @@ def BuyItems():
         except:
             ordersAmount = 0
         try:
-            driver.find_element_by_xpath(
-                '//*[@id="tabContentsMyListings"]/div/h3/span[1]')
-            ordersAmount = 0
+            myOrders = driver.find_element_by_xpath(
+                '//*[@id="my_market_buylistings_number"]')
+            buyOrdersAmount = int(myOrders.text)
+            if buyOrdersAmount > 0:
+                ordersAmount = 0
         except:
             pass
         if ordersAmount < 100:
