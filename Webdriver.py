@@ -79,7 +79,8 @@ def PriceConverter():
 
 def RegexSearch():
     global ps, ps_length
-    priceRegex = re.compile(r'\d?\d\,\d?\d?')  # Search by type 00,00
+    # Search by type 00000,00
+    priceRegex = re.compile(r'\d?\d?\d?\d?\d?\,\d?\d?')
     prices = priceRegex.findall(listings)
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
@@ -192,14 +193,6 @@ def BuyItems():
                 '//*[@id="market_buyorder_dialog_accept_ssa"]').click()
             driver.find_element_by_xpath(
                 '//*[@id="market_buyorder_dialog_purchase"]').click()
-            # try:
-            #     driver.find_element_by_xpath(
-            #         '//*[@id="market_buyorder_dialog_error_text"]')
-            #     print("Can't buy any more items")
-            #     input()
-            #     driver.quit()
-            # except:
-            #     pass
 
 
 while True:
@@ -207,6 +200,16 @@ while True:
     # closing tabs
     for i in range(1, 11):
         driver.switch_to_window(driver.window_handles[1])
+        try:
+            textik = driver.find_element_by_id(
+                'market_buyorder_dialog_error_text')
+            orderLimit = textik.text
+            if orderLimit.startswith("Этот запрос на покупку не может быть размещен"):
+                print("Can't buy any more items, press <Enter> to exit")
+                input()
+                driver.quit()
+        except:
+            pass
         driver.close()
     # pressing "next(>)" button
     driver.switch_to_window(driver.window_handles[0])
