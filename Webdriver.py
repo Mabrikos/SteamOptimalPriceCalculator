@@ -26,20 +26,6 @@ def ReductionInit():
         ReductionInit()
 
 
-ReductionInit()
-
-usr = input('Enter username: ')
-pwd = input('Enter password: ')
-itemsPage = input('Enter items page: ')
-itemsAmount = input('Enter items amount: ')  # amount of items to buy
-print('\nLaunching browser...')
-
-driver = webdriver.Firefox()
-
-wait = WebDriverWait(driver, 3)
-sys.setrecursionlimit(10000)
-
-
 def login():
     driver.get("http://store.steampowered.com")
     driver.find_element_by_class_name("global_action_link").click()
@@ -62,6 +48,18 @@ def OpenNewTab():
         .perform()
 
 
+def RegexSearch():
+    global ps, ps_length
+    # Search by type 00000,00
+    priceRegex = re.compile(r'\d?\d?\d?\d?\d?\,\d?\d?')
+    prices = priceRegex.findall(listings)
+    prices = [w.replace(',', '.') for w in prices]
+    prices = list(map(float, prices))
+    ps = sorted(list(set(prices)))
+    print(ps)
+    ps_length = len(ps)
+
+
 def PriceConverter():
     global optimalPrice
     cpp_buy = round((cpp / per * 100), 2)
@@ -76,18 +74,6 @@ def PriceConverter():
         optimalPrice = str(cpp_buy)
     else:
         print(">>> Price is unacceptable\n")
-
-
-def RegexSearch():
-    global ps, ps_length
-    # Search by type 00000,00
-    priceRegex = re.compile(r'\d?\d?\d?\d?\d?\,\d?\d?')
-    prices = priceRegex.findall(listings)
-    prices = [w.replace(',', '.') for w in prices]
-    prices = list(map(float, prices))
-    ps = sorted(list(set(prices)))
-    print(ps)
-    ps_length = len(ps)
 
 
 def PriceCalculator():
@@ -122,14 +108,6 @@ def PriceCalculator():
                     cpp = ps[i - 1]
                     PriceConverter()
             break
-
-
-login()
-driver.get(
-    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
-
-wait.until(EC.presence_of_element_located(
-    (By.XPATH, '//*[@id="result_0"]/div[2]')))
 
 
 def BuyItems():
@@ -196,6 +174,28 @@ def BuyItems():
                 '//*[@id="market_buyorder_dialog_purchase"]').click()
 
 
+ReductionInit()
+
+usr = input('Enter username: ')
+pwd = input('Enter password: ')
+itemsPage = input('Enter items page: ')
+itemsAmount = input('Enter items amount: ')  # amount of items to buy
+print('\nLaunching browser...')
+
+driver = webdriver.Firefox()
+
+wait = WebDriverWait(driver, 3)
+sys.setrecursionlimit(10000)
+
+login()
+# items list page
+driver.get(
+    'https://steamcommunity.com/market/search?appid=570#p{}_price_asc'.format(str(itemsPage)))
+
+wait.until(EC.presence_of_element_located(
+    (By.XPATH, '//*[@id="result_0"]/div[2]')))
+
+
 while True:
     BuyItems()
     # closing tabs
@@ -205,7 +205,11 @@ while True:
             textik = driver.find_element_by_id(
                 'market_buyorder_dialog_error_text')
             orderLimit = textik.text
-            if orderLimit.startswith("Этот запрос на покупку не может быть размещен"):
+            RUS_Limit = orderLimit.startswith(
+                "Этот запрос на покупку не может быть размещен")
+            ENG_Limit = orderLimit.startswith(
+                "This buy order cannot be placed")
+            if RUS_Limit or ENG_Limit:
                 print("Can't buy any more items, press <Enter> to exit")
                 input()
                 driver.quit()
