@@ -1,3 +1,3 @@
 # SteamOptimalPriceCalculator
 
-Steam buy price calculator for Dota 2 items
+Steam buy price calculator for steam items
