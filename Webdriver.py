@@ -11,6 +11,8 @@ import time
 import re
 import sys
 
+moneySpent, itemsBought = 0, 0
+
 
 def ReductionInit():
     global per
@@ -49,63 +51,67 @@ def OpenNewTab():
 
 
 def RegexSearch():
-    global ps, ps_length
+    global priceList, priceListLength
     # Search by type 00000,00
     priceRegex = re.compile(r'\d?\d?\d?\d?\d?\,\d?\d?')
     prices = priceRegex.findall(listings)
     prices = [w.replace(',', '.') for w in prices]
     prices = list(map(float, prices))
-    ps = sorted(list(set(prices)))
-    print(ps)
-    ps_length = len(ps)
+    priceList = sorted(list(set(prices)))
+    # print(priceList)
+    priceListLength = len(priceList)
 
 
 def PriceConverter():
+    global itemsBought
+    global moneySpent
     global optimalPrice
-    cpp_buy = round((cpp / per * 100), 2)
+    finalCalculatedPrice_buy = round((finalCalculatedPrice / per * 100), 2)
     # Range of allowed prices (from 0.25 to 1.00)
-    if cpp_buy < 0.25:  # or cpp_buy > 1.00:
-        cpp_buy = 0
-        optimalPrice = str(cpp_buy)
-    if cpp_buy > 0:
-        print(
-            ">>> Optimal price is [%s]"
-            % cpp_buy, '\n')
-        optimalPrice = str(cpp_buy)
+    if finalCalculatedPrice_buy < 0.25:  # or finalCalculatedPrice_buy > 1.00:
+        finalCalculatedPrice_buy = 0
+        optimalPrice = str(finalCalculatedPrice_buy)
+    itemName = driver.find_element_by_xpath(
+        '//*[@id="largeiteminfo_item_name"]').text
+    if finalCalculatedPrice_buy > 0:
+        print(">>> Optimal price for [{}] is: {} \n".format(itemName, finalCalculatedPrice_buy))
+        optimalPrice = str(finalCalculatedPrice_buy)
+        itemsBought += 1
+        moneySpent += round((float(optimalPrice) * int(itemsAmount)), 2)
     else:
         print(">>> Price is unacceptable\n")
 
 
 def PriceCalculator():
-    global cpp
+    global finalCalculatedPrice
     RegexSearch()
-    for i in range(ps_length):
+    for i in range(priceListLength):
         try:
-            global cp
-            cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
-            if cp >= 20:
-                cpp = ps[i + 1]
+            global calculatedPrice
+            calculatedPrice=((100 - ((priceList[i] * 100) / priceList[i + 1])))
+            if calculatedPrice >= 20:
+                finalCalculatedPrice=priceList[i + 1]
                 PriceConverter()
                 break
         except IndexError:
-            cpp = ps[0]
+            finalCalculatedPrice=priceList[0]
             PriceConverter()
             break
-        cp = ((100 - ((ps[i] * 100) / ps[i + 1])))
-        if cp < 20:
-            test1 = ps[i - 1]  # last element
-            test2 = ps[i]  # first element
-            test_result = ((100 - ((test2 * 100) / test1)))
+        calculatedPrice=((100 - ((priceList[i] * 100) / priceList[i + 1])))
+        if calculatedPrice < 20:
+            test1=priceList[i - 1]  # last element
+            test2=priceList[i]  # first element
+            test_result=((100 - ((test2 * 100) / test1)))
             if test_result > 15 < 48:
-                cpp = ps[i]
+                finalCalculatedPrice=priceList[i]
                 PriceConverter()
             else:
                 if test_result < 15 > 5:
-                    cpp = ps[i]
+                    finalCalculatedPrice=priceList[i]
                     PriceConverter()
                 else:
                     # if crap above doesn't do his job => (last / first)
-                    cpp = ps[i - 1]
+                    finalCalculatedPrice=priceList[i - 1]
                     PriceConverter()
             break
 
@@ -114,7 +120,7 @@ def BuyItems():
     global open_tab
     global listings
     for i in range(10):
-        open_tab = driver.find_element_by_xpath(
+        open_tab=driver.find_element_by_xpath(
             '//*[@id="result_{}"]/div[2]'.format(i))
         OpenNewTab()
     # time.sleep(20)
@@ -125,31 +131,31 @@ def BuyItems():
         try:
             wait.until(EC.presence_of_element_located((
                 By.XPATH, '//*[@id="market_commodity_buyrequests"]/span[1]')))
-            elem = driver.find_element_by_xpath(
+            elem=driver.find_element_by_xpath(
                 '//*[@id="market_commodity_buyrequests"]/span[1]')
-            ordersAmount = int(elem.text)
+            ordersAmount=int(elem.text)
         except:
-            ordersAmount = 0
+            ordersAmount=0
         try:
-            myOrders = driver.find_element_by_xpath(
+            myOrders=driver.find_element_by_xpath(
                 '//*[@id="my_market_buylistings_number"]')
-            buyOrdersAmount = int(myOrders.text)
+            buyOrdersAmount=int(myOrders.text)
             if buyOrdersAmount > 0:
-                ordersAmount = 0
+                ordersAmount=0
         except:
             pass
         if ordersAmount < 100:
-            print("Not enough people wants this item or you've already ordered it")
+            # print("Not enough people wants this item or you've already ordered it")
         else:
             # Calculating optimal price
             print('Orders amount is {}'.format(ordersAmount))
             try:
-                elem = driver.find_element_by_id('searchResultsRows')
-                listings = elem.text
+                elem=driver.find_element_by_id('searchResultsRows')
+                listings=elem.text
             except:
-                elem = driver.find_element_by_id(
+                elem=driver.find_element_by_id(
                     'market_commodity_forsale_table')
-                listings = elem.text
+                listings=elem.text
             PriceCalculator()
             # time.sleep(1)
             try:
@@ -176,15 +182,15 @@ def BuyItems():
 
 ReductionInit()
 
-usr = input('Enter username: ')
-pwd = input('Enter password: ')
-itemsPage = input('Enter items page: ')
-itemsAmount = input('Enter items amount: ')  # amount of items to buy
+usr=input('Enter username: ')
+pwd=input('Enter password: ')
+itemsPage=input('Enter items page: ')
+itemsAmount=input('Enter items amount: ')  # amount of items to buy
 print('\nLaunching browser...')
 
-driver = webdriver.Firefox()
+driver=webdriver.Firefox()
 
-wait = WebDriverWait(driver, 3)
+wait=WebDriverWait(driver, 3)
 sys.setrecursionlimit(10000)
 
 login()
@@ -202,15 +208,17 @@ while True:
     for i in range(1, 11):
         driver.switch_to_window(driver.window_handles[1])
         try:
-            textik = driver.find_element_by_id(
+            error=driver.find_element_by_id(
                 'market_buyorder_dialog_error_text')
-            orderLimit = textik.text
-            RUS_Limit = orderLimit.startswith(
+            orderLimit=error.text
+            RUS_Limit=orderLimit.startswith(
                 "Этот запрос на покупку не может быть размещен")
-            ENG_Limit = orderLimit.startswith(
+            ENG_Limit=orderLimit.startswith(
                 "This buy order cannot be placed")
             if RUS_Limit or ENG_Limit:
                 print("Can't buy any more items, press <Enter> to exit")
+                print("Money spent in total: ", '\t', moneySpent)
+                print("Items bought in total: ", '\t', itemsBought)
                 input()
                 driver.quit()
         except:
