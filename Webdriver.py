@@ -146,6 +146,7 @@ def BuyItems():
             pass
         if ordersAmount < 100:
             # print("Not enough people wants this item or you've already ordered it")
+            pass
         else:
             # Calculating optimal price
             print('Orders amount is {}'.format(ordersAmount))
